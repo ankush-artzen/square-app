@@ -1,0 +1,162 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+}
+
+model Session {
+  id               String            @id @map("_id")
+  accessToken      String? 
+  expires          DateTime?
+  isOnline         Boolean
+  scope            String?
+  shop             String
+  state            String
+  apiKey           String
+  onlineAccessInfo OnlineAccessInfo?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model OnlineAccessInfo {
+  id                  String          @id @default(auto()) @map("_id") @db.ObjectId
+  session             Session?        @relation(fields: [sessionId], references: [id])
+  sessionId           String?         @unique
+  expiresIn           Int
+  associatedUserScope String
+  associatedUser      AssociatedUser?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+}
+
+model AssociatedUser {
+  id                 String            @id @default(auto()) @map("_id") @db.ObjectId
+  onlineAccessInfo   OnlineAccessInfo? @relation(fields: [onlineAccessInfoId], references: [id])
+  onlineAccessInfoId String?           @unique
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  userId             BigInt
+  firstName          String
+  lastName           String
+  email              String
+  accountOwner       Boolean
+  locale             String
+  collaborator       Boolean
+  emailVerified      Boolean
+}
+
+model StoreSetting {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  isActive  Boolean
+  shop      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SquareAccount {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  shopDomain     String   @unique
+  accessToken    String
+  refreshToken   String
+  merchantId     String
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+
+
+model Order {
+  id              String   @id @map("_id") @default(auto()) @db.ObjectId
+  squareOrderId   String   @unique
+  locationId      String
+  customerId      String?
+  createdAt       DateTime
+  updatedAt       DateTime
+  closedAt        DateTime?
+  state           String
+  totalAmount     Int      // in cents
+  currency        String
+  lineItems       LineItem[]
+  netAmountDue    Int
+  shopDomain      String
+}
+
+model LineItem {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId          String   @db.ObjectId
+  name             String
+  variationName    String?
+  quantity         Int
+  basePriceAmount  Int
+  totalAmount      Int
+  itemType         String
+  catalogObjectId  String
+  order            Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+
+model CustomerQueue {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  customerId    String
+  shopDomain    String
+  processed     Boolean  @default(false)
+  error         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+model SquareCatalog {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  squareId    String   @unique
+  shopDomain  String
+  type        String  
+  name        String?
+  data        Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  productType String?
+  categoryId  String?   
+  itemId     String?   
+  amount     Int?
+  currency   String?
+}
+
+model SquareLocation {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  locationId   String   @unique                 
+  shopDomain   String
+  name         String
+  timezone     String
+  capabilities Json
+  status       String
+  createdAt    DateTime
+  merchantId   String
+  country      String
+  currency     String
+  type         String
+  businessHours Json?                        
+  updatedAt    DateTime @updatedAt
+}
+
+model SquareCustomer {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  customerId   String   @unique                
+  givenName    String?
+  familyName   String?
+  emailAddress String?  @unique
+  phoneNumber  String?
+  createdAt    DateTime
+  updatedAt    DateTime @updatedAt
+}
+
+
+
+
+

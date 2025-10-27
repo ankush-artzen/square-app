@@ -1,0 +1,1 @@
+export const appurl ="https://checked-vaccine-caribbean-employed.trycloudflare.com"
