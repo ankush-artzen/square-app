@@ -169,7 +169,7 @@ changes on your app.
 ```shell
 pnpm run deploy
 ```
-
+-------------------------------------------------------------------------------
 ### Application Storage
 
 This template uses Prisma to store and manage sessions. For more information on
