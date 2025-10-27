@@ -1,12 +1,12 @@
 {
   "name": "shopify-square",
   "version": "2.0.1",
-  "license": "MIT",
-  "scripts": {
+  "license": "MIT","scripts": {
     "dev": "shopify app dev",
     "next:dev": "next dev",
+
     "info": "shopify app info",
-    "build": "shopify app build",
+    "build": "prisma generate && next build",
     "generate": "shopify app generate",
     "deploy": "shopify app deploy",
     "docker-dev": "docker compose up -d",
