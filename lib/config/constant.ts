@@ -1,1 +1,1 @@
-export const appurl ="https://checked-vaccine-caribbean-employed.trycloudflare.com"
+export const appurl ="https://square-app-rho.vercel.app"
